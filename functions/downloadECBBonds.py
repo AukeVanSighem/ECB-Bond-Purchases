@@ -1,4 +1,11 @@
 import requests,datetime,re
+import os
+import pandas as pd
+
+dictionaryBondsECB = {}
+dictionaryDatesBondsAdded = {}
+holdingsECB = pd.DataFrame()
+holdingsECBDates = pd.DataFrame()
 
 # This function gets the csv from the url and places the new data in a dictionary with keys = ISIN,
 # and value = [NCB, ISSUER, MATURITY DATE, COUPON RATE]
@@ -29,3 +36,47 @@ def downloadDataToDictionary(url,dictionaryCompanyInfo,dictionaryDateAdded,date)
         if (splitLine[1] not in dictionaryCompanyInfo): # only add new ISINs to the dictionary
             dictionaryCompanyInfo[splitLine[1]] = [splitLine[0], nameCompany, splitLine[-2], splitLine[-1]]
             dictionaryDateAdded[splitLine[1]] = [date,date<datetime.date(2020,1,15)]
+
+def downloadDataFromWebsites():
+    dateToDownload = datetime.date(2017, 6, 23)
+    change_url_date = datetime.date(2020, 3, 27)
+    end_date = datetime.date(2021,4,23)
+    delta = datetime.timedelta(days=7)
+    while dateToDownload <= change_url_date:
+        date = dateToDownload.strftime("%Y%m%d")
+        url = "https://www.ecb.europa.eu/mopo/pdf/CSPPholdings_"+date+".csv"
+        downloadDataToDictionary(url,dictionaryBondsECB,dictionaryDatesBondsAdded,dateToDownload)
+        dateToDownload += delta
+    dateToDownload+delta
+    while dateToDownload <= end_date:
+        date = dateToDownload.strftime("%Y%m%d")
+        url = "https://www.ecb.europa.eu/mopo/pdf/CSPP_PEPP_corporate_bond_holdings_"+date+".csv"
+        downloadDataToDictionary(url,dictionaryBondsECB,dictionaryDatesBondsAdded,dateToDownload)
+        dateToDownload += delta
+
+def dictionariesToDataframe():
+    matrixData = [] # 2D array with row per ISIN and columns for different data
+    for ISIN, dataInDictionary in dictionaryBondsECB.items():
+        item = [ISIN] + dataInDictionary
+        matrixData.append(item)
+    holdingsECB = pd.DataFrame(matrixData, columns=["ISIN","NCB","ISSUER","MATURITY DATE","COUPON RATE"])
+    matrixData = [] # 2D array with row per ISIN and columns for different data
+    for ISIN, dataInDictionary in dictionaryDatesBondsAdded.items():
+        item = [ISIN] + dataInDictionary
+        matrixData.append(item)
+    holdingsECBDates = pd.DataFrame(matrixData, columns=["ISIN","Date","Before2020"])
+
+def exportCSV(parent):
+    holdingsECB.to_csv(parent+'/data/holdingsECB.csv',index=False,sep=";")
+    holdingsECBDates.to_csv(parent+'/data/holdingsECBDates.csv',index=False,sep="\t")
+
+def download_ECB_Bonds():
+    path = __file__
+    parent = os.path.join(path, os.pardir)
+    parent = os.path.join(parent, os.pardir)
+    if not (os.path.isfile(parent+'\data\holdingsECB.csv') & os.path.isfile(parent+'\data\holdingsECBDates.csv')):
+        downloadDataFromWebsites()
+        dictionariesToDataframe()
+        exportCSV(parent)
+
+
