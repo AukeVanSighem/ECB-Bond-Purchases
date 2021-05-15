@@ -1,8 +1,8 @@
 from OpenPermID import OpenPermID
-import Levenshtein
 import geocoder
 import pandas as pd
 import numpy as np
+import os
 
 # Gain access to the permid database
 opid = OpenPermID()
@@ -108,10 +108,13 @@ def convert_sector_lookups():
     return sector_lookups_converted
 
 def get_sector_mappings(holdingsECB):
-    sector_mappings = get_LEI_mappings().merge(convert_sector_lookups(), how = 'left', on = 'PermID')
-    sector_mappings = get_companies_LEI(holdingsECB).merge(sector_mappings, how = 'left', on = 'LEI')
+    path = __file__
+    parent = os.path.join(path, os.pardir)
+    parent = os.path.join(parent, os.pardir)
+    if not (os.path.isfile(parent+'\output\sector_mappings_data.xlsx')):
+        sector_mappings = get_LEI_mappings().merge(convert_sector_lookups(), how = 'left', on = 'PermID')
+        sector_mappings = get_companies_LEI(holdingsECB).merge(sector_mappings, how = 'left', on = 'LEI')
+        sector_mappings.to_excel(parent+'\output\sector_mappings_data.xlsx', engine='xlsxwriter')
+    else:
+        sector_mappings = pd.read_excel(parent+'\output\sector_mappings_data.xlsx', header=0)
     return sector_mappings
-
-def main(holdingsECB):
-    get_companies_LEI(holdingsECB)
-    return get_sector_mappings(holdingsECB)
