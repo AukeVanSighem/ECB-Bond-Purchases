@@ -4,8 +4,6 @@ import pandas as pd
 
 dictionaryBondsECB = {}
 dictionaryDatesBondsAdded = {}
-holdingsECB = pd.DataFrame()
-holdingsECBDates = pd.DataFrame()
 
 # This function gets the csv from the url and places the new data in a dictionary with keys = ISIN,
 # and value = [NCB, ISSUER, MATURITY DATE, COUPON RATE]
@@ -65,8 +63,9 @@ def dictionariesToDataframe():
         item = [ISIN] + dataInDictionary
         matrixData.append(item)
     holdingsECBDates = pd.DataFrame(matrixData, columns=["ISIN","Date","Before2020"])
+    return [holdingsECB, holdingsECBDates]
 
-def exportCSV(parent):
+def exportCSV(parent, holdingsECB, holdingsECBDates):
     holdingsECB.to_csv(parent+'/data/holdingsECB.csv',index=False,sep=";")
     holdingsECBDates.to_csv(parent+'/data/holdingsECBDates.csv',index=False,sep="\t")
 
@@ -76,7 +75,8 @@ def download_ECB_Bonds():
     parent = os.path.join(parent, os.pardir)
     if not (os.path.isfile(parent+'\data\holdingsECB.csv') & os.path.isfile(parent+'\data\holdingsECBDates.csv')):
         downloadDataFromWebsites()
-        dictionariesToDataframe()
-        exportCSV(parent)
+        holdings, dates = dictionariesToDataframe()
+        exportCSV(parent, holdings, dates)
+    return holdings
 
 
