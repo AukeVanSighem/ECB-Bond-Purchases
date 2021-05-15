@@ -77,6 +77,8 @@ def download_ECB_Bonds():
         downloadDataFromWebsites()
         holdings, dates = dictionariesToDataframe()
         exportCSV(parent, holdings, dates)
+    else:
+        holdings = pd.read_csv("data/holdingsECB.csv",sep=";")
     return holdings
 
 
