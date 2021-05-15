@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+# Put the percentage of each sector in the pie chart if the value is bigger than 2.4
 def make_autopct(values):
     def my_autopct(pct):
         total = sum(values)
@@ -9,12 +10,15 @@ def make_autopct(values):
             return ''
     return my_autopct
 
+# Get all the sectors of a given type in decending order based on the number of times a bond was bought for this sector.
 def get_all_sectors(sector_type, sector_mappings):
     sector_mappings['number']=1 # TODO: count them in a cleaner way
     sectors = sector_mappings[[sector_type, 'number']].groupby([sector_type]).sum()
     sectors = sectors.sort_values("number", axis=0, ascending=False, inplace=False, kind='quicksort', na_position='last', ignore_index=False, key=None)
     return sectors
-    
+
+# Create a pie chart to represent the number of times an industry, sector or supersector is present in the data
+# (multiple bonds for the same company are counted separately)    
 def make_pie_chart(column_name, sector_mappings):
     fig = plt.figure(figsize=(9,9))
     ax = plt.subplot(111)
