@@ -1,5 +1,3 @@
-from functions import pieCharts
-
 # Returns a dictionary with all the sectors from PermID (https://en.wikipedia.org/wiki/The_Refinitiv_Business_Classification) and gives every sector a score for greennes.
 # -1 means not green
 # 0 means neutral
@@ -66,8 +64,15 @@ def get_sector_green_dict():
     return dictionary
 
 def map_green_dict_to_data_frame(data_frame):
-    data_frame["green"] = None # Default greenness of sector is None
-    for i in range(0, data_frame.shape[0]):
+    new_data_frame = data_frame.copy()
+    new_data_frame["green"] = None # Default greenness of sector is None
+    for i in range(0, new_data_frame.shape[0]):
             if data_frame.index[i] in get_sector_green_dict().keys():
-                data_frame["green"][i]=get_sector_green_dict()[data_frame.index[i]]
-    print(data_frame)
+                new_data_frame.loc[data_frame.index[i], "green"] = get_sector_green_dict()[data_frame.index[i]]
+    return new_data_frame
+
+def get_sector_mappings_with_years(sector_mappings, years_issuer_bought):
+    sector_mappings_with_years = sector_mappings.merge(years_issuer_bought, how = "left", on = "ISSUER")
+    columns_of_interest = ["ISSUER", "LEI", "hasPrimaryBusinessSector", "hasPrimaryEconomicSector", "hasPrimaryIndustryGroup", "number", "YEARS"]
+    sector_mappings_with_years.loc[:, columns_of_interest]
+    return sector_mappings_with_years
