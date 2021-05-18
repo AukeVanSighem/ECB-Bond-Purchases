@@ -41,29 +41,7 @@ def get_sector_green_dict():
         "Institutions, Associations & Organizations": 0,
         "Government Activity": 0,
         "Academic & Educational Services": 0,
-        "Technology Equipment": 0,
-        # Primary economic sector
-        "Energy": -1,
-        "Basic Materials": -1, # Materials
-        "Capital Goods": -1,
-        "Commercial and Professional Services": 0,
-        "Automobiles and Components": -1,
-        "Consumer Durables and Apparel": -1,
-        "Consumer Services": 0,
-        "Retailing": 0,
-        "Food, Beverage, and Tobacco": 0,
-        "Household and Personal Products": 0,
-        "Food and Staples Retailing": 0,
-        "Household and Personal Products": 0,
-        "Banks": 0,
-        "Insurance": 0,
-        "Financials": 0, # Diversified Financials
-        "Healthcare": 0, # Health Care Equipment and Services
-        "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
-        "Technology": 0, # Technology Hardware and Equipment
-        "Software and Services": 0,
-        "Telecommunications Services": 0,
-        "Semiconductors & Semiconductor Equipment": 0
+        "Technology Equipment": 0
     }
     return dictionary
 
@@ -112,5 +90,7 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
     plt.figure(figsize=(20,20))
     for column in sectors_spaghetti_data_frame.drop(columns=["x"], axis=1):
         plt.plot(sectors_spaghetti_data_frame["x"], sectors_spaghetti_data_frame[column], marker='', linewidth=1, alpha=0.9)
+    
+    # TODO: fix legend!
         
     plt.show()
