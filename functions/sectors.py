@@ -56,7 +56,7 @@ def map_green_dict_to_data_frame(data_frame):
 def get_sector_mappings_with_years(sector_mappings, years_issuer_bought):
     sector_mappings_with_years = sector_mappings.merge(years_issuer_bought, how = "left", on = "ISSUER")
     columns_of_interest = ["ISSUER", "LEI", "hasPrimaryBusinessSector", "hasPrimaryEconomicSector", "hasPrimaryIndustryGroup", "number", "YEARS"]
-    sector_mappings_with_years.loc[:, columns_of_interest]
+    sector_mappings_with_years = sector_mappings_with_years.reindex(columns = columns_of_interest)
     return sector_mappings_with_years
 
 def get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_issuer_bought):
@@ -87,10 +87,19 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
     palette = plt.get_cmap('Set1')
 
     #spaghetti plot of CO2 emissions 
-    plt.figure(figsize=(20,20))
+    plt.figure(figsize=(20,10))
+    i = 0
+    line_style = '-'
     for column in sectors_spaghetti_data_frame.drop(columns=["x"], axis=1):
-        plt.plot(sectors_spaghetti_data_frame["x"], sectors_spaghetti_data_frame[column], marker='', linewidth=1, alpha=0.9)
-    
+        i += 1
+        if (i > 10):
+            if (i <= 20): 
+                line_style = ':'
+            elif (i <= 30):
+                line_style = '-.'
+
+        plt.plot(sectors_spaghetti_data_frame["x"], sectors_spaghetti_data_frame[column], marker='', linewidth=1, alpha=0.9, label=column, linestyle = line_style)
     # TODO: fix legend!
-        
+    plt.legend()    
     plt.show()
+    plt.close()
