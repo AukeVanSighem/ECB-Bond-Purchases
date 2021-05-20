@@ -92,7 +92,6 @@ pydantic==1.7.3
 Pygments==2.7.3
 python-dateutil==2.8.1
 pytz==2021.1
-pywin32==300
 PyYAML==5.4.1
 pyzmq==22.0.3
 qtconsole==5.0.1
