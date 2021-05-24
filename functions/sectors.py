@@ -1,5 +1,7 @@
+from matplotlib import axes
 import pandas as pd
 import matplotlib.pyplot as plt
+from pandas.core.arrays.categorical import Categorical
 
 
 # Returns a dictionary with all the sectors from PermID (https://en.wikipedia.org/wiki/The_Refinitiv_Business_Classification) and gives every sector a score for greennes.
@@ -62,9 +64,9 @@ def get_sector_mappings_with_years(sector_mappings, years_issuer_bought):
 def get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_issuer_bought):
     sector_mappings_with_years = get_sector_mappings_with_years(sector_mappings, years_issuer_bought)
     companies_in_sector = sector_mappings_with_years[sector_mappings_with_years["hasPrimaryBusinessSector"]==sector]
-    year_x_count = {"2015": 0, "2016": 0, "2017": 0, "2018": 0, "2019": 0, "2020": 0, "2021": 0}
+    year_x_count = {"2017": 0, "2018": 0, "2019": 0, "2020": 0, "2021": 0}
     for company_index in companies_in_sector.index:
-        for year_x in ["2015", "2016", "2017", "2018", "2019", "2020", "2021"]:
+        for year_x in ["2017", "2018", "2019", "2020", "2021"]:
             for year in sector_mappings_with_years["YEARS"][company_index]:
                 if str(year) == str(year_x):
                     year_x_count[year_x] += 1
@@ -72,12 +74,13 @@ def get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_
 
 # Get number of companies of which bonds were bought per sector per year
 def get_number_companies_bonds_bought_per_year(primary_business_sector, sector_mappings, years_issuer_bought):
-    sectors_spaghetti_data_frame = pd.DataFrame({'x': range(2015,2022)})
+    # sectors_spaghetti_data_frame = pd.DataFrame({'x': range(2017,2022)})
+    sectors_spaghetti_data_frame = pd.DataFrame({'x': ["2017", "2018", "2019", "2020", "2021"]})
     for sector in primary_business_sector.index:
-        sectors_spaghetti_data_frame[sector] = [0,0,0,0,0,0,0]
+        sectors_spaghetti_data_frame[sector] = [0,0,0,0,0]
         year_x_count_sector = get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_issuer_bought)
-        for x in sectors_spaghetti_data_frame.x:
-            sectors_spaghetti_data_frame[sector][x-2015] = year_x_count_sector[str(x)]
+        for i in range(0, len(sectors_spaghetti_data_frame["x"])):
+            sectors_spaghetti_data_frame[sector][i] = year_x_count_sector[str(i+2017)]
     return sectors_spaghetti_data_frame
 
 # spaghetti plot of number bonds bought per sector
@@ -93,7 +96,7 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
     sectors_spaghetti_data_frame = get_number_companies_bonds_bought_per_year(primary_business_sector, sector_mappings, years_issuer_bought)
     total_count = [1] * len(sectors_spaghetti_data_frame["x"])
     for i in range(0, len(total_count)):
-        if (summation_row := sum(sectors_spaghetti_data_frame.loc[i])-sectors_spaghetti_data_frame["x"][i]) != 0:
+        if (summation_row := sum(sectors_spaghetti_data_frame.loc[i, sectors_spaghetti_data_frame.columns != "x"])) != 0: # Avoid division by zero
             total_count[i] = summation_row
 
     plt.style.use('seaborn-darkgrid')
