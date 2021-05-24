@@ -45,6 +45,8 @@ def get_sector_green_dict():
     }
     return dictionary
 
+# Return a copy of the given data frame with an extra column "green" which contains the greenness value from the get_sector_green_dict belonging to the keys in the data_frame
+# If the key is not present in the dictionary, the value None is assigned.
 def map_green_dict_to_data_frame(data_frame):
     new_data_frame = data_frame.copy()
     new_data_frame["green"] = None # Default greenness of sector is None
@@ -53,12 +55,15 @@ def map_green_dict_to_data_frame(data_frame):
                 new_data_frame.loc[data_frame.index[i], "green"] = get_sector_green_dict()[data_frame.index[i]]
     return new_data_frame
 
+# Combine the data frame with the sector information ("ISSUER", "LEI", "hasPrimaryBusinessSector", "hasPrimaryEconomicSector", "hasPrimaryIndustryGroup", "number") with
+# the data frame with info on the years of which boughts where bought from these companies ("YEARS").
 def get_sector_mappings_with_years(sector_mappings, years_issuer_bought):
     sector_mappings_with_years = sector_mappings.merge(years_issuer_bought, how = "left", on = "ISSUER")
     columns_of_interest = ["ISSUER", "LEI", "hasPrimaryBusinessSector", "hasPrimaryEconomicSector", "hasPrimaryIndustryGroup", "number", "YEARS"]
     sector_mappings_with_years = sector_mappings_with_years.reindex(columns = columns_of_interest)
     return sector_mappings_with_years
 
+# For one sector, return the number of companies belonging to that sector from which bonds were bought in every year separately.
 def get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_issuer_bought):
     sector_mappings_with_years = get_sector_mappings_with_years(sector_mappings, years_issuer_bought)
     companies_in_sector = sector_mappings_with_years[sector_mappings_with_years["hasPrimaryBusinessSector"]==sector]
@@ -72,7 +77,6 @@ def get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_
 
 # Get number of companies of which bonds were bought per sector per year
 def get_number_companies_bonds_bought_per_year(primary_business_sector, sector_mappings, years_issuer_bought):
-    # sectors_spaghetti_data_frame = pd.DataFrame({'x': range(2017,2022)})
     sectors_spaghetti_data_frame = pd.DataFrame({'x': ["2017", "2018", "2019", "2020", "2021"]})
     for sector in primary_business_sector.index:
         sectors_spaghetti_data_frame[sector] = [0,0,0,0,0]
