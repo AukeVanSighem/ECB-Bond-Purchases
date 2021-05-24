@@ -80,8 +80,16 @@ def get_number_companies_bonds_bought_per_year(primary_business_sector, sector_m
             sectors_spaghetti_data_frame[sector][x-2015] = year_x_count_sector[str(x)]
     return sectors_spaghetti_data_frame
 
-# spaghetti plot of number bonds bought per sector 
-def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_issuer_bought):
+# spaghetti plot of number bonds bought per sector
+# primary_business_sector = Pandas data frame with the entire counts of sectors in which the ECB invested to calculate percentages
+# sector_mappings = Pandas data frame with all the information on all the bought bonds: Issuer, LEI, hasPrimaryBusinessSector, ...
+# years_issuer_bought = Pandas data frame with for every issuer the years in which their bonds were bought
+# sectors_to_show = Pandas data frame of indexes representing every sector for which a line should be shown in the plot. If no parameter is given,
+# all the sectors from the primary_business_sector data frame
+def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_issuer_bought, sectors_to_show = pd.DataFrame()):
+    if sectors_to_show.empty:
+        sectors_to_show = primary_business_sector.index
+
     sectors_spaghetti_data_frame = get_number_companies_bonds_bought_per_year(primary_business_sector, sector_mappings, years_issuer_bought)
     plt.style.use('seaborn-darkgrid')
     palette = plt.get_cmap('Set1')
@@ -90,7 +98,8 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
     plt.figure(figsize=(20,10))
     i = 0
     line_style = '-'
-    for column in sectors_spaghetti_data_frame.drop(columns=["x"], axis=1):
+    #for column in sectors_spaghetti_data_frame.drop(columns=["x"], axis=1):
+    for column in sectors_to_show:
         i += 1
         if (i > 10):
             if (i <= 20): 
@@ -99,7 +108,7 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
                 line_style = '-.'
 
         plt.plot(sectors_spaghetti_data_frame["x"], sectors_spaghetti_data_frame[column], marker='', linewidth=1, alpha=0.9, label=column, linestyle = line_style)
-    # TODO: fix legend!
+   
     plt.legend()    
     plt.show()
     plt.close()
