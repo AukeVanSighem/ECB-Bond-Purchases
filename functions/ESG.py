@@ -105,7 +105,7 @@ def get_correlation_coefficients(esg_company_data_eligible, esg_company_data_hol
 def get_ESG_scores_per_year(years_issuer_bought, esg_company_data_holdings):
     esg_company_data_holdings_with_years = years_issuer_bought.merge(esg_company_data_holdings,"inner","ISSUER")
 
-    esg_scores_per_year = {'2015':[],'2016':[],'2017':[],'2018':[],'2019':[],'2020':[],'2021':[]}
+    esg_scores_per_year = {'2017':[],'2018':[],'2019':[],'2020':[],'2021':[]}
 
     for index,row in esg_company_data_holdings_with_years.iterrows():
         years = row["YEARS"]
@@ -128,7 +128,7 @@ def average_company_esg_score_plot(years_issuer_bought, esg_company_data_holding
 
     plt.figure()
 
-    years = range(2015,2022)
+    years = range(2017,2022)
 
     plt.errorbar(x=years,y=average_esg_per_year,yerr=std_esg_per_year,capsize=10)
 
