@@ -1,7 +1,5 @@
-from matplotlib import axes
 import pandas as pd
 import matplotlib.pyplot as plt
-from pandas.core.arrays.categorical import Categorical
 
 
 # Returns a dictionary with all the sectors from PermID (https://en.wikipedia.org/wiki/The_Refinitiv_Business_Classification) and gives every sector a score for greennes.
