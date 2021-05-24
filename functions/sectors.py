@@ -91,7 +91,7 @@ def get_number_companies_bonds_bought_per_year(primary_business_sector, sector_m
 # years_issuer_bought = Pandas data frame with for every issuer the years in which their bonds were bought
 # sectors_to_show = Pandas data frame of indexes representing every sector for which a line should be shown in the plot. If no parameter is given,
 # all the sectors from the primary_business_sector data frame
-def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_issuer_bought, sectors_to_show = pd.DataFrame()):
+def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_issuer_bought, sectors_to_show = pd.DataFrame(), title = "sectors"):
     if sectors_to_show.empty:
         sectors_to_show = primary_business_sector.index
 
@@ -103,7 +103,8 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
 
     plt.style.use('seaborn-darkgrid')
     palette = plt.get_cmap('Set1')
-    plt.figure(figsize=(20,10))
+    plt.rcParams.update({'font.size': 16})
+    plt.figure(figsize=(10,7.5))
 
     # Change line style every 10 sectors
     i = 0
@@ -119,9 +120,9 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
         y = sectors_spaghetti_data_frame[column]/total_count*100
         plt.plot(sectors_spaghetti_data_frame["x"], y, marker='', linewidth=1, alpha=0.9, label=column, linestyle = line_style)
    
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1, 1), loc='upper left', prop={'size': 10})
     plt.xlabel("Time (years)")
     plt.ylabel("Percentage of bonds (%)")
-    plt.title("Percentage of bonds bought over the years in different sectors.")
+    plt.title("Percentage of bonds bought over the years in different " + title + ".")
     plt.show()
     plt.close()
