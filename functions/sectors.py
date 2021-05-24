@@ -91,14 +91,18 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
         sectors_to_show = primary_business_sector.index
 
     sectors_spaghetti_data_frame = get_number_companies_bonds_bought_per_year(primary_business_sector, sector_mappings, years_issuer_bought)
+    total_count = [1] * len(sectors_spaghetti_data_frame["x"])
+    for i in range(0, len(total_count)):
+        if (summation_row := sum(sectors_spaghetti_data_frame.loc[i])-sectors_spaghetti_data_frame["x"][i]) != 0:
+            total_count[i] = summation_row
+
     plt.style.use('seaborn-darkgrid')
     palette = plt.get_cmap('Set1')
-
-    #spaghetti plot of CO2 emissions 
     plt.figure(figsize=(20,10))
+
+    # Change line style every 10 sectors
     i = 0
     line_style = '-'
-    #for column in sectors_spaghetti_data_frame.drop(columns=["x"], axis=1):
     for column in sectors_to_show:
         i += 1
         if (i > 10):
@@ -107,8 +111,12 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
             elif (i <= 30):
                 line_style = '-.'
 
-        plt.plot(sectors_spaghetti_data_frame["x"], sectors_spaghetti_data_frame[column], marker='', linewidth=1, alpha=0.9, label=column, linestyle = line_style)
+        y = sectors_spaghetti_data_frame[column]/total_count*100
+        plt.plot(sectors_spaghetti_data_frame["x"], y, marker='', linewidth=1, alpha=0.9, label=column, linestyle = line_style)
    
-    plt.legend()    
+    plt.legend()
+    plt.xlabel("Time (years)")
+    plt.ylabel("Percentage of bonds (%)")
+    plt.title("Percentage of bonds bought over the years in different sectors.")
     plt.show()
     plt.close()
