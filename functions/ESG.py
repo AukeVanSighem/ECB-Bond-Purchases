@@ -152,10 +152,12 @@ def average_company_esg_score_plot(years_issuer_bought, esg_company_data_holding
     years_holdings = range(2017,2022)
     years_eligible = range(2015,2022)
 
-    plt.errorbar(x=years_holdings,y=mean_ESG_holdings,yerr=error_ESG_holdings,capsize=10,label="data on holdings")
-    plt.errorbar(x=years_eligible,y=mean_ESG_eligible,yerr=error_ESG_eligible,capsize=10,label="data on eligible universe")
+    plt.errorbar(x=years_holdings,y=mean_ESG_holdings,yerr=error_ESG_holdings,capsize=10,
+                                    label="average of holdings invested in during that year")
+    plt.errorbar(x=years_eligible,y=mean_ESG_eligible,yerr=error_ESG_eligible,capsize=10,
+                                    label="data on companies in eligible universe")
 
-    plt.title("Average ESG score of the companies that the ECB invested in during that year\n")
+    plt.title("Comparison of the ESG scores of the companies that the ECB invested in vs. the eligible universe\n")
     plt.xlabel("Years")
     plt.ylabel("ESG score")
     plt.xticks(years_eligible)
