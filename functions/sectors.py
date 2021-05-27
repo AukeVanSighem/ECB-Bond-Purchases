@@ -82,7 +82,7 @@ def get_number_companies_bonds_bought_per_year(primary_business_sector, sector_m
         sectors_spaghetti_data_frame[sector] = [0,0,0,0,0]
         year_x_count_sector = get_number_bonds_bought_by_sector_over_years(sector, sector_mappings, years_issuer_bought)
         for i in range(0, len(sectors_spaghetti_data_frame["x"])):
-            sectors_spaghetti_data_frame[sector][i] = year_x_count_sector[str(i+2017)]
+            sectors_spaghetti_data_frame.loc[i, sector] = year_x_count_sector[str(i+2017)]
     return sectors_spaghetti_data_frame
 
 # spaghetti plot of number bonds bought per sector
