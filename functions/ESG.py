@@ -14,22 +14,34 @@ def cleaning_esg_data(df):
     # replace zeros with nans, as these are easier to replace
     esg_company_data = esg_company_data.replace(to_replace = '0', value = np.nan) 
 
+    nb_of_rows_before_removing_nans = esg_company_data.shape[0]
+    nb_of_cells_before_removing_nans = esg_company_data.size
+
     # remove rows with no data for ESG score
     esg_company_data.dropna(axis=0, how='all', 
                             subset=column_names_esg_company_data[1:8], inplace=True)
+    
+    nb_of_rows_after_removing_nans = esg_company_data.shape[0]
 
     #converting all numbers to floats 
     for column_name in column_names_esg_company_data[1:8]:
         esg_company_data[column_name] = esg_company_data[column_name].astype(float)
 
+    nb_of_nans_left = esg_company_data.isna().sum().sum()
+
     # interpolate data that is missing
     esg_company_data.iloc[:,1:] = esg_company_data.iloc[:,1:].interpolate(method='linear', axis=1, limit_direction='both',
                                                                           inplace=False)
-    #TODO: If we want to keep this apart, we can make a new variable holding the filled in dataframe
 
     # reset the indexes
     esg_company_data = esg_company_data.reset_index()
     esg_company_data = esg_company_data.drop(columns=["index"])
+
+    print("nb of rows without ESG scores: ", (nb_of_rows_before_removing_nans-nb_of_rows_after_removing_nans))
+    print("percentage of rows without ESG scores: ", 
+                (nb_of_rows_before_removing_nans-nb_of_rows_after_removing_nans)/nb_of_rows_before_removing_nans)
+    print("nb of nans filled in using interpolation: ", nb_of_nans_left)
+    print("percentage of nans filled in using interpolation: ", nb_of_nans_left/nb_of_cells_before_removing_nans)
     
     return esg_company_data
 
