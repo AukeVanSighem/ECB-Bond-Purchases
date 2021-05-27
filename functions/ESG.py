@@ -123,19 +123,31 @@ def get_average_and_std_esg_per_year(years_issuer_bought, esg_company_data_holdi
         std_esg_per_year.append(np.std(esg_scores_per_year[key]))
     return average_esg_per_year, std_esg_per_year
 
-def average_company_esg_score_plot(years_issuer_bought, esg_company_data_holdings):
-    average_esg_per_year, std_esg_per_year = get_average_and_std_esg_per_year(years_issuer_bought, esg_company_data_holdings)
+def average_company_esg_score_plot(years_issuer_bought, esg_company_data_holdings,esg_company_data_eligible):
+    """ Make a plot of esg scores per year, comparing eligible and holdings
+    
+    For the eligible universe, it plots the evolution of the mean of ESG scores of the 
+    companies that have sufficient data available. For holdings, it plots the mean ESG 
+    score of companies that ECB bought bonds of that year."""
 
-    plt.figure()
+    mean_ESG_holdings, error_ESG_holdings = get_average_and_std_esg_per_year(years_issuer_bought, esg_company_data_holdings)
 
-    years = range(2017,2022)
+    mean_ESG_eligible = esg_company_data_eligible.mean().values
+    error_ESG_eligible = esg_company_data_eligible.std().values
 
-    plt.errorbar(x=years,y=average_esg_per_year,yerr=std_esg_per_year,capsize=10)
+    plt.figure(figsize=(10,5))
+
+    years_holdings = range(2017,2022)
+    years_eligible = range(2015,2022)
+
+    plt.errorbar(x=years_holdings,y=mean_ESG_holdings,yerr=error_ESG_holdings,capsize=10,label="data on holdings")
+    plt.errorbar(x=years_eligible,y=mean_ESG_eligible,yerr=error_ESG_eligible,capsize=10,label="data on eligible universe")
 
     plt.title("Average ESG score of the companies that the ECB invested in during that year\n")
     plt.xlabel("Years")
     plt.ylabel("ESG score")
-    plt.xticks(years)
+    plt.xticks(years_eligible)
     plt.ylim(0,100)
+    plt.legend()
 
     plt.show()
