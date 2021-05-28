@@ -41,5 +41,6 @@ def draw_spaghetti_plot_greenbonds():
     
     plt.bar(range(len(greenbonds_spaghetti_data_frame)), list(greenbonds_spaghetti_data_frame.values()), align='center')
     plt.xticks(range(len(greenbonds_spaghetti_data_frame)), list(greenbonds_spaghetti_data_frame.keys()))
+    plt.title("Number of green bonds the ECB invested in each year\n")
 
     plt.show
