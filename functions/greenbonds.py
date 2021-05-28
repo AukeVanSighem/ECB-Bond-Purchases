@@ -35,12 +35,31 @@ def get_number_greenbonds_with_year():
                     year_x_count[year_x] += 1
     return year_x_count
 
+def get_number_bonds_with_year():
+    bonds_with_year = holdingsECB.merge(readEikonData.get_dates_isin_data_frame(), how = "left", on = "ISIN")
+    year_x_count = {"2017": 0, "2018": 0, "2019": 0, "2020": 0, "2021": 0}
+    for bonds_index in bonds_with_year.index:
+        for year_x in ["2017", "2018", "2019", "2020", "2021"]:
+            for year in bonds_with_year["YEARS"][bonds_index]:
+                if str(year) == str(year_x):
+                    year_x_count[year_x] += 1
+    return year_x_count
+
+def get_percentages_greenbonds_on_bonds_per_year():
+    number_bonds_with_year_dataframe = pd.DataFrame({'year' : list(get_number_bonds_with_year().keys()), 'count' : list(get_number_bonds_with_year().values())})
+    number_greenbonds_with_year_dataframe = pd.DataFrame({'year' : list(get_number_greenbonds_with_year().keys()), 'count' : list(get_number_greenbonds_with_year().values())})
+
+    data = [number_greenbonds_with_year_dataframe["year"], ((number_greenbonds_with_year_dataframe["count"]/number_bonds_with_year_dataframe["count"])*100)]
+
+    headers = ["year", "percentage"]
+
+    percentages_greenbonds_on_bonds_per_year = pd.concat(data, axis=1, keys=headers)
+    return percentages_greenbonds_on_bonds_per_year
 
 def draw_spaghetti_plot_greenbonds():
-    greenbonds_spaghetti_data_frame = get_number_greenbonds_with_year()
+    greenbonds_spaghetti_data_frame = get_percentages_greenbonds_on_bonds_per_year()
     
-    plt.bar(range(len(greenbonds_spaghetti_data_frame)), list(greenbonds_spaghetti_data_frame.values()), align='center')
-    plt.xticks(range(len(greenbonds_spaghetti_data_frame)), list(greenbonds_spaghetti_data_frame.keys()))
-    plt.title("Number of green bonds the ECB invested in each year\n")
+    greenbonds_spaghetti_data_frame.plot(kind='bar',x='year',y='percentage')
+    plt.title("Percentage of greenbonds in comparison to all bonds per year\n")
 
     plt.show
