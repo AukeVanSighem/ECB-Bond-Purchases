@@ -57,3 +57,21 @@ def get_dates_data_frame():
     return years_issuer_bought
 
 
+def get_dates_isin_data_frame():
+    years_isin_bought = {}
+    for index,row in get_dates().merge(eikon_data_general[["ISSUER","ISIN"]],"left","ISIN").iterrows():
+        isin = row["ISIN"]
+        year = row["Date"].year
+        if isin in years_isin_bought:
+            if year not in years_isin_bought[isin]:
+                years_isin_bought[isin].append(year)
+        else:
+            years_isin_bought[isin] = [year]
+
+    # convert dictionary to pd.DataFrame
+    matrixDatai = []
+    for isin, years in years_isin_bought.items():
+        item = [isin] + [years]
+        matrixDatai.append(item)
+    years_isin_bought = pd.DataFrame(matrixDatai,columns=["ISIN","YEARS"])
+    return years_isin_bought
