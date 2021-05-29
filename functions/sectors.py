@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from IPython.display import (display, clear_output)
+import ipywidgets as widgets
 
 
 # Returns a dictionary with all the sectors from PermID (https://en.wikipedia.org/wiki/The_Refinitiv_Business_Classification) and gives every sector a score for greennes.
@@ -126,3 +128,74 @@ def draw_spaghetti_plot_sectors(primary_business_sector, sector_mappings, years_
     plt.title("Percentage of bonds bought over the years in different " + title + ".")
     plt.show()
     plt.close()
+
+# WIDGET
+
+# Save the variables primary_business_sector, sector_mappings and years_issuer_bought globally for future use
+def set_global_sector_variables(primary_business_sector, sector_mappings, years_issuer_bought):
+    global global_primary_business_sector
+    global_primary_business_sector = primary_business_sector
+
+    global global_sector_mappings
+    global_sector_mappings = sector_mappings
+
+    global global_years_issuer_bought
+    global_years_issuer_bought = years_issuer_bought
+
+# RadioButtons widget with options "All", "Green" and "Grey"
+quick_pick = widgets.RadioButtons(
+    options=["All", "Green", "Grey"],
+    description="Sectors: "
+)
+
+# SelectMultiple widget with an option for every sector in the get_sector_green_dict() dictionary
+customize = widgets.SelectMultiple(
+    options= list(get_sector_green_dict().keys()),
+    value=["Energy - Fossil Fuels"],
+    rows=33,
+    description="Sectors: ",
+    layout={'width': 'max-content'},
+    disabled=False
+)
+
+# Button with description "Select all"
+button_all = widgets.Button(description = "Select all")
+
+# Tab widget with children quick_pick and customize
+tab_widget = widgets.Tab()
+tab_widget.children = [quick_pick, customize]
+tab_widget.set_title(0, "Quick pick")
+tab_widget.set_title(1, "Customize")
+
+# Select the "all" option for the quick_pick and cutomize buttons
+def select_all(*args):
+    customize.value = customize.options
+    quick_pick.value = "All"
+
+# Widget output, needed for interaction
+output = widgets.Output()
+
+# Get a data frame with the sector names belonging to the given sector category ("Green", "Grey" or default)
+def getSectorNames(category):
+    switcher={
+            "Green":  global_primary_business_sector[global_primary_business_sector["green"]==1].index,
+            "Grey": global_primary_business_sector[global_primary_business_sector["green"]==-1].index
+            }
+    return switcher.get(category, pd.DataFrame())
+
+# Handler for the quick_pick widget
+# Clears the previous graphs and plots the spaghetti plot with the information belonging to the selected sector category
+def on_value_change(change):
+    with output:
+        # Draw a spaghetti plot for all the selected sectors
+        clear_output()
+        draw_spaghetti_plot_sectors(global_primary_business_sector, global_sector_mappings, global_years_issuer_bought, getSectorNames(change["new"]))
+
+# Main function to use the widgets from the notebook
+# Displays the tab_widget and button_all and connects the output
+# Listens for interaction with one of the buttons and initiates the spaghetti plot for all sectors
+def display_widget():
+    display(tab_widget, button_all, output)
+    on_value_change({"new": "All"})
+    button_all.on_click(select_all)
+    quick_pick.observe(on_value_change, names = "value")
