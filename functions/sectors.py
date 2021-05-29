@@ -8,12 +8,13 @@ import ipywidgets as widgets
 # -1 means not green
 # 0 means neutral
 # 1 means green
+# Sectors in which the ECB did not invest are put in comments
 def get_sector_green_dict():
     dictionary = {
         # Primary business sector
         "Energy - Fossil Fuels": -1,
-        "Renewable Energy": 1,
-        "Uranium": 1,
+        #"Renewable Energy": 1,
+        #"Uranium": 1,
         "Chemicals": -1,
         "Mineral Resources": -1,
         "Applied Resources": -1,
@@ -39,11 +40,10 @@ def get_sector_green_dict():
         "Financial Technology (Fintech) & Infrastructure":  0,
         "Telecommunications Services": 0,
         "Utilities": 1,
-        "Real Estate": 0,
-        "Institutions, Associations & Organizations": 0,
-        "Government Activity": 0,
-        "Academic & Educational Services": 0,
-        "Technology Equipment": 0
+        #"Institutions, Associations & Organizations": 0,
+        #"Government Activity": 0,
+       # "Academic & Educational Services": 0,
+        "Real Estate": 0
     }
     return dictionary
 
@@ -152,7 +152,7 @@ quick_pick = widgets.RadioButtons(
 customize = widgets.SelectMultiple(
     options= list(get_sector_green_dict().keys()),
     value=["Energy - Fossil Fuels"],
-    rows=33,
+    rows=28,
     description="Sectors: ",
     layout={'width': 'max-content'},
     disabled=False
@@ -183,6 +183,12 @@ def getSectorNames(category):
             }
     return switcher.get(category, pd.DataFrame())
 
+# Get a data frame with the sector names belonging to the given sector names list
+def getSectorNamesCustomized(names):
+    # names = [value for value in names if value in global_primary_business_sector.index] # Uncomment if there are sectors in the dictionary in which the ECB did not invest
+    indices = pd.DataFrame(index=names, columns=[""])
+    return indices.index
+
 # Handler for the quick_pick widget
 # Clears the previous graphs and plots the spaghetti plot with the information belonging to the selected sector category
 def on_value_change(change):
@@ -190,6 +196,14 @@ def on_value_change(change):
         # Draw a spaghetti plot for all the selected sectors
         clear_output()
         draw_spaghetti_plot_sectors(global_primary_business_sector, global_sector_mappings, global_years_issuer_bought, getSectorNames(change["new"]))
+
+# Handler for the customize widget
+# Clears the previous graphs and plots the spaghetti plot with the information belonging to the selected sectors
+def on_selection(change):
+    with output:
+        # Draw a spaghetti plot for all the selected sectors
+        clear_output()
+        draw_spaghetti_plot_sectors(global_primary_business_sector, global_sector_mappings, global_years_issuer_bought, getSectorNamesCustomized(change["new"]))
 
 # Main function to use the widgets from the notebook
 # Displays the tab_widget and button_all and connects the output
@@ -199,3 +213,4 @@ def display_widget():
     on_value_change({"new": "All"})
     button_all.on_click(select_all)
     quick_pick.observe(on_value_change, names = "value")
+    customize.observe(on_selection, names = "value")
