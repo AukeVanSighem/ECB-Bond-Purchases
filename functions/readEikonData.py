@@ -1,27 +1,33 @@
 import os
 import pandas as pd
 
+# Returns the path to the folder in which the data is stored
 def get_eikon_data_folder():
     path = __file__
     parent = os.path.join(path, os.pardir)
     parent = os.path.join(parent, os.pardir)
-    return parent + "/Data/EIKON/"
+    return parent + "/data/"
 
+# Path to the folder in which the EIKON data is stored
 eikon_data_folder = get_eikon_data_folder()
 
+# Get dataframes with the data in the files holdingsECBEnvironment.txt and holdingsECBGeneralInfo.txt
 def get_eikon_data_general():
     eikon_data_environment = pd.read_csv(eikon_data_folder+"holdingsECBEnvironment.txt",sep="\t")
-    # TODO: remove right, empty columns from data frame
+    eikon_data_environment.dropna(axis=1, how='all', inplace=True)
     eikon_data_general = pd.read_csv(eikon_data_folder+"holdingsECBGeneralInfo.txt",sep="\t")
+    eikon_data_general.dropna(axis=1, how='all', inplace=True)
     return [eikon_data_environment, eikon_data_general]
 
 eikon_data_environment, eikon_data_general = get_eikon_data_general()
 
+# Get the data in which the ECB invested from EIKON in one dataframe
 def get_eikon_data_complete():
     eikon_data_complete = eikon_data_general.merge(eikon_data_environment, "left", "ISIN") #append environment
     eikon_data_complete.rename(columns={'CO2.1': 'CO2_1'}, inplace=True) #changed column name to prevent syntax errors
     return eikon_data_complete
 
+# Get the data from the eligible universe in one dataframe
 def get_data_eligible_complete():
     eligible_environment = pd.read_csv(get_eikon_data_folder()+"eligibleUniverseEnvironment.txt",sep="\t")
     eligible_general = pd.read_csv(eikon_data_folder+"eligibleUniverseGeneralInfo.txt",sep="\t")
