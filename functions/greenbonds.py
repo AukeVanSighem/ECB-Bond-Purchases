@@ -63,3 +63,4 @@ def draw_spaghetti_plot_greenbonds():
     plt.title("Percentage of greenbonds in comparison to all bonds per year\n")
 
     plt.show
+	
