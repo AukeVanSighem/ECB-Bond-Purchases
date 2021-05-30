@@ -10,7 +10,7 @@ opid.set_access_token("r95vEAhvmucG8iNGtsP17hjbgUGMhz4j")
 
 # Get Eikon information on holdings
 def get_holdings_Eikon():
-    holdingsEikon = pd.read_csv("data/holdingsECBGeneralInfo.txt",sep="\t").iloc[:, :-3]
+    holdingsEikon = pd.read_csv("Data/EIKON/holdingsECBGeneralInfo.txt",sep="\t").iloc[:, :-3]
     holdingsEikon.rename(columns = {'Legal Entity ID': 'LEI'}, inplace = True)
     return holdingsEikon
 
@@ -111,10 +111,10 @@ def get_sector_mappings(holdingsECB):
     path = __file__
     parent = os.path.join(path, os.pardir)
     parent = os.path.join(parent, os.pardir)
-    if not (os.path.isfile(parent+'\output\sector_mappings_data.xlsx')):
+    if not (os.path.isfile(parent+'Data\output\sector_mappings_data.xlsx')):
         sector_mappings = get_LEI_mappings().merge(convert_sector_lookups(), how = 'left', on = 'PermID')
         sector_mappings = get_companies_LEI(holdingsECB).merge(sector_mappings, how = 'left', on = 'LEI')
-        sector_mappings.to_excel(parent+'\output\sector_mappings_data.xlsx', engine='xlsxwriter')
+        sector_mappings.to_excel(parent+'\Data\output\sector_mappings_data.xlsx', engine='xlsxwriter')
     else:
-        sector_mappings = pd.read_excel(parent+'\output\sector_mappings_data.xlsx', header=0)
+        sector_mappings = pd.read_excel(parent+'\Data\output\sector_mappings_data.xlsx', header=0)
     return sector_mappings

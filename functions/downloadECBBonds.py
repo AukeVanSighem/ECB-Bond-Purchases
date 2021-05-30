@@ -65,20 +65,17 @@ def dictionariesToDataframe():
     holdingsECBDates = pd.DataFrame(matrixData, columns=["ISIN","Date","Before2020"])
     return [holdingsECB, holdingsECBDates]
 
-def exportCSV(parent, holdingsECB, holdingsECBDates):
-    holdingsECB.to_csv(parent+'/data/holdingsECB.csv',index=False,sep=";")
-    holdingsECBDates.to_csv(parent+'/data/holdingsECBDates.csv',index=False,sep="\t")
+def exportCSV(parentDirectory, holdingsECB, holdingsECBDates):
+    holdingsECB.to_csv(parentDirectory+'/Data/output/holdingsECB.csv',index=False,sep=";")
+    holdingsECBDates.to_csv(parentDirectory+'/Data/output/holdingsECBDates.csv',index=False,sep="\t")
 
-def download_ECB_Bonds():
-    path = __file__
-    parent = os.path.join(path, os.pardir)
-    parent = os.path.join(parent, os.pardir)
-    if not (os.path.isfile(parent+'\data\holdingsECB.csv') & os.path.isfile(parent+'\data\holdingsECBDates.csv')):
+def download_ECB_Bonds(parentDirectory):
+    if not (os.path.isfile(parentDirectory +'\Data\output\holdingsECB.csv') & os.path.isfile(parentDirectory +'\Data\output\holdingsECBDates.csv')):
         downloadDataFromWebsites()
         holdings, dates = dictionariesToDataframe()
-        exportCSV(parent, holdings, dates)
+        exportCSV(parentDirectory, holdings, dates)
     else:
-        holdings = pd.read_csv("data/holdingsECB.csv",sep=";")
+        holdings = pd.read_csv("Data/output/holdingsECB.csv",sep=";")
     return holdings
 
 

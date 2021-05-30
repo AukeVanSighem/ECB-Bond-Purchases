@@ -7,7 +7,7 @@ from functions import readEikonData
 holdingsECB = downloadECBBonds.download_ECB_Bonds()
 
 def compareGreenbondsEuronextvsEIKON():
-    euronext_greenbonds = pd.read_excel("data/Euronext-Green-Bond-List.xlsx", header=0)
+    euronext_greenbonds = pd.read_excel("Data/Euronext-Green-Bond-List.xlsx", header=0)
     ecb_euronext_greenbonds = holdingsECB[(holdingsECB["ISIN"].isin(euronext_greenbonds["ISIN"]))]
     
     EIKON_greenbonds = readEikonData.eikon_data_environment[["ISIN", "Green Bond Flag"]]

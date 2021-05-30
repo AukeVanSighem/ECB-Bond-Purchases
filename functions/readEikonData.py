@@ -5,7 +5,7 @@ def get_eikon_data_folder():
     path = __file__
     parent = os.path.join(path, os.pardir)
     parent = os.path.join(parent, os.pardir)
-    return parent + "/data/"
+    return parent + "/Data/EIKON/"
 
 eikon_data_folder = get_eikon_data_folder()
 
