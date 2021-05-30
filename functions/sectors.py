@@ -214,3 +214,15 @@ def display_widget():
     button_all.on_click(select_all)
     quick_pick.observe(on_value_change, names = "value")
     customize.observe(on_selection, names = "value")
+
+# Return sector_mappings with the specific business sectors exchanged with the category name to which they belong: "Less green", "More green" or "Neutral"
+def get_sector_mappings_modified():
+    green_dict = {-1: "Less green", 0: "Neutral", 1: "More green"}
+    sector_mappings_modified = global_sector_mappings.copy()
+    sector_mappings_modified["hasPrimaryBusinessSector"] = sector_mappings_modified.Greenness.apply(lambda x: green_dict[x])
+    return sector_mappings_modified
+
+# Drawing a sphagetti plot by grouping sectors according to greenness
+def draw_spaghetti_plot_with_grouped_sectors(levels_of_greenness):
+    levels_of_greenness = map_green_dict_to_data_frame(levels_of_greenness)
+    draw_spaghetti_plot_sectors(levels_of_greenness, get_sector_mappings_modified(), global_years_issuer_bought, title = "greenness groups")
