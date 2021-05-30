@@ -1,11 +1,10 @@
 import os
 import pandas as pd
 
+s3Directory = 'https://s3.console.aws.amazon.com/s3/buckets/s3groupsweden/'
+
 def get_eikon_data_folder():
-    path = __file__
-    parent = os.path.join(path, os.pardir)
-    parent = os.path.join(parent, os.pardir)
-    return parent + "/Data/EIKON/"
+    return s3Directory + "Data/EIKON/"
 
 eikon_data_folder = get_eikon_data_folder()
 
