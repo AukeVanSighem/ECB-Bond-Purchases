@@ -33,7 +33,7 @@ def downloadDataToDictionary(url,dictionaryCompanyInfo,dictionaryDateAdded,date)
             nameCompany = splitLine[2]
         if (splitLine[1] not in dictionaryCompanyInfo): # only add new ISINs to the dictionary
             dictionaryCompanyInfo[splitLine[1]] = [splitLine[0], nameCompany, splitLine[-2], splitLine[-1]]
-            dictionaryDateAdded[splitLine[1]] = [date,date<datetime.date(2020,1,15)]
+            dictionaryDateAdded[splitLine[1]] = [date]
 
 def downloadDataFromWebsites():
     dateToDownload = datetime.date(2017, 6, 23)
@@ -62,7 +62,7 @@ def dictionariesToDataframe():
     for ISIN, dataInDictionary in dictionaryDatesBondsAdded.items():
         item = [ISIN] + dataInDictionary
         matrixData.append(item)
-    holdingsECBDates = pd.DataFrame(matrixData, columns=["ISIN","Date","Before2020"])
+    holdingsECBDates = pd.DataFrame(matrixData, columns=["ISIN","Date"])
     return [holdingsECB, holdingsECBDates]
 
 def exportCSV(parent, holdingsECB, holdingsECBDates):
