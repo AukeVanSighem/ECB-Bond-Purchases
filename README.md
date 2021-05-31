@@ -14,10 +14,10 @@ Has the European Central bank been supporting the green economy when purchasing 
 
 ## Organisation
 ### Data
-The data used for the project can be found in this S3 bucket in the _data_ folder. It is devided into two categories: one for data retrieved before hand and one with data that is actively pulled from the internet and updated.
+The data used for the project can be found in this S3 bucket in the _Data_ folder. Data that is pulled upon running is stored locally in the folder _Code/output_ to have faster acces to the data if you run the same functions again.
 
 ### Report
-The pdf of the report accompanying this project can be found in the _report_ folder.
+The pdf of the report accompanying this project can be found in the _Report_ folder.
 
 ### Code
 The main file to run is the **ECB_bond_purchases.ipynb** in this folder. It uses functions from the folder named _functions_.
