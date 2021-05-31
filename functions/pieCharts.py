@@ -12,7 +12,7 @@ def make_autopct(values):
 
 # Get all the sectors of a given type in decending order based on the number of times a bond was bought for this sector.
 def get_all_sectors(sector_type, sector_mappings):
-    sector_mappings['number']=1 # TODO: count them in a cleaner way
+    sector_mappings['number']=1
     sectors = sector_mappings[[sector_type, 'number']].groupby([sector_type]).sum()
     sectors = sectors.sort_values("number", axis=0, ascending=False, inplace=False, kind='quicksort', na_position='last', ignore_index=False, key=None)
     return sectors
