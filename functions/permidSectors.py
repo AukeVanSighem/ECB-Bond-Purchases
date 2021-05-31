@@ -1,4 +1,3 @@
-from re import S
 from OpenPermID import OpenPermID
 import geocoder
 import pandas as pd

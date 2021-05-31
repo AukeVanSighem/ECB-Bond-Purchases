@@ -1,7 +1,5 @@
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
-
 from functions import downloadECBBonds
 from functions import readEikonData
 
