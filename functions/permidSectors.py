@@ -4,14 +4,17 @@ import geocoder
 import pandas as pd
 import numpy as np
 import os
+from json import JSONDecodeError
 
 # Gain access to the permid database
 opid = OpenPermID()
 opid.set_access_token("r95vEAhvmucG8iNGtsP17hjbgUGMhz4j")
 
+data_folder = "https://s3groupsweden.s3.eu-central-1.amazonaws.com/Data/"
+
 # Get Eikon information on holdings
-def get_holdings_Eikon(s3Directory):
-    holdingsEikon = pd.read_csv(s3Directory + "Data/EIKON/holdingsECBGeneralInfo.txt",sep="\t").iloc[:, :-3]
+def get_holdings_Eikon():
+    holdingsEikon = pd.read_csv(data_folder + "EIKON/holdingsECBGeneralInfo.txt",sep="\t").iloc[:, :-3]
     holdingsEikon.rename(columns = {'Legal Entity ID': 'LEI'}, inplace = True)
     return holdingsEikon
 
