@@ -1,33 +1,15 @@
 import os
 import pandas as pd
 
-<<<<<<< HEAD
-# Returns the path to the folder in which the data is stored
-def get_eikon_data_folder():
-    path = __file__
-    parent = os.path.join(path, os.pardir)
-    parent = os.path.join(parent, os.pardir)
-    return parent + "/data/"
-
-# Path to the folder in which the EIKON data is stored
-eikon_data_folder = get_eikon_data_folder()
-=======
 # The path to the folder in the S3 bucket in which the data is stored
 eikon_data_folder = "https://s3groupsweden.s3.eu-central-1.amazonaws.com/Data/EIKON/"
->>>>>>> S3bucket
 
 # Get dataframes with the data in the files holdingsECBEnvironment.txt and holdingsECBGeneralInfo.txt
 def get_eikon_data_general():
     eikon_data_environment = pd.read_csv(eikon_data_folder+"holdingsECBEnvironment.txt",sep="\t")
-<<<<<<< HEAD
-    eikon_data_environment.dropna(axis=1, how='all', inplace=True)
-    eikon_data_general = pd.read_csv(eikon_data_folder+"holdingsECBGeneralInfo.txt",sep="\t")
-    eikon_data_general.dropna(axis=1, how='all', inplace=True)
-=======
     eikon_data_environment.dropna(axis=1, how='all', inplace=True) # Remove empty columns at the end of the file
     eikon_data_general = pd.read_csv(eikon_data_folder+"holdingsECBGeneralInfo.txt",sep="\t")
     eikon_data_general.dropna(axis=1, how='all', inplace=True) # Remove empty columns at the end of the file
->>>>>>> S3bucket
     return [eikon_data_environment, eikon_data_general]
 
 eikon_data_environment, eikon_data_general = get_eikon_data_general()
