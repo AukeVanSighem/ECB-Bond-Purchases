@@ -1,13 +1,16 @@
 import pandas as pd
+import os
 import matplotlib.pyplot as plt
 
 from functions import downloadECBBonds
 from functions import readEikonData
 
 holdingsECB = downloadECBBonds.download_ECB_Bonds()
+# The path to the folder in the S3 bucket in which the data is stored
+data_folder = "https://s3groupsweden.s3.eu-central-1.amazonaws.com/Data/"
 
 def compareGreenbondsEuronextvsEIKON():
-    euronext_greenbonds = pd.read_excel("Data/Euronext-Green-Bond-List.xlsx", header=0)
+    euronext_greenbonds = pd.read_excel(data_folder + "Euronext-Green-Bond-List.xlsx", header=0)
     ecb_euronext_greenbonds = holdingsECB[(holdingsECB["ISIN"].isin(euronext_greenbonds["ISIN"]))]
     
     EIKON_greenbonds = readEikonData.eikon_data_environment[["ISIN", "Green Bond Flag"]]
