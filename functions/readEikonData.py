@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from functions import downloadECBBonds
 
 # The path to the folder in the S3 bucket in which the data is stored
 eikon_data_folder = "https://s3groupsweden.s3.eu-central-1.amazonaws.com/Data/EIKON/"
@@ -30,7 +31,8 @@ def get_data_eligible_complete():
 
 # Read the dates
 def get_dates():
-    holdings_date_info = pd.read_csv(eikon_data_folder+"holdingsECBDates.csv",sep="\t")
+    path = downloadECBBonds.getPath()
+    holdings_date_info = pd.read_csv(path + "holdingsECBDates.csv",sep="\t")
     holdings_date_info["Date"] = pd.to_datetime(holdings_date_info["Date"])
     return holdings_date_info
 

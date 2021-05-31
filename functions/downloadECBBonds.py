@@ -66,19 +66,23 @@ def dictionariesToDataframe():
     return [holdingsECB, holdingsECBDates]
 
 def exportCSV(parent, holdingsECB, holdingsECBDates):
-    holdingsECB.to_csv(parent+'/data/holdingsECB.csv',index=False,sep=";")
-    holdingsECBDates.to_csv(parent+'/data/holdingsECBDates.csv',index=False,sep="\t")
+    holdingsECB.to_csv(parent + "holdingsECB.csv", index=False,sep=";")
+    holdingsECBDates.to_csv(parent + "holdingsECBDates.csv", index=False,sep="\t")
 
-def download_ECB_Bonds():
+def getPath():
     path = __file__
     parent = os.path.join(path, os.pardir)
     parent = os.path.join(parent, os.pardir)
-    if not (os.path.isfile(parent+'\data\holdingsECB.csv') & os.path.isfile(parent+'\data\holdingsECBDates.csv')):
+    return parent + "\output\\"
+
+def download_ECB_Bonds():
+    parent = getPath()
+    if not (os.path.isfile(parent + "holdingsECB.csv") & os.path.isfile(parent + "holdingsECBDates.csv")):
         downloadDataFromWebsites()
         holdings, dates = dictionariesToDataframe()
         exportCSV(parent, holdings, dates)
     else:
-        holdings = pd.read_csv("data/holdingsECB.csv",sep=";")
+        holdings = pd.read_csv(parent + "holdingsECB.csv", sep=";")
     return holdings
 
 
