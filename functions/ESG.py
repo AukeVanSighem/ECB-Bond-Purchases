@@ -2,13 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def cleaning_esg_data(df):
+    """Prepares dataframe df which at least holds ESG info for data analysis"""
+
     column_names_esg_company_data = ["ISSUER", "ESG Score 2015", "ESG Score 2016", "ESG Score 2017", 
                                 "ESG Score 2018", "ESG Score 2019", "ESG Score 2020", 
                                 "ESG Score 2021"]
-    #started cleaning data as above 
-    esg_data = df[column_names_esg_company_data]
-    esg_company_data = esg_data.drop_duplicates(subset= ["ISSUER"])
-    esg_company_data = esg_company_data.replace(to_replace = '[,]', value ='.', regex=True)
+    esg_data = df[column_names_esg_company_data] #select relevant columns
+    esg_company_data = esg_data.drop_duplicates(subset= ["ISSUER"]) #delete duplicate issuers
+    esg_company_data = esg_company_data.replace(to_replace = '[,]', value ='.', regex=True) 
 
     # replace zeros with nans, as these are easier to replace
     esg_company_data = esg_company_data.replace(to_replace = '0', value = np.nan) 
@@ -45,6 +46,12 @@ def cleaning_esg_data(df):
     return esg_company_data
 
 def get_ESG_scores_per_year(years_issuer_bought, esg_company_data_holdings):
+    """saves all ESG scores of companies that the ECB invested in per year
+    
+    If ECB bound bond of company c in year yyyy, the ESG score of c in yyyy is saved in the appropriate place
+    Return:
+    - esg_scores_per_year: dictionary, keys = years, values = ESG scores"""
+
     esg_company_data_holdings_with_years = years_issuer_bought.merge(esg_company_data_holdings,"inner","ISSUER")
 
     esg_scores_per_year = {'2017':[],'2018':[],'2019':[],'2020':[],'2021':[]}
@@ -57,6 +64,7 @@ def get_ESG_scores_per_year(years_issuer_bought, esg_company_data_holdings):
     return esg_scores_per_year
 
 def get_average_and_std_esg_per_year(years_issuer_bought, esg_company_data_holdings):
+    """calculates average and standard deviation of the ESG scores per year"""
     average_esg_per_year = []
     std_esg_per_year = []
     esg_scores_per_year = get_ESG_scores_per_year(years_issuer_bought, esg_company_data_holdings)

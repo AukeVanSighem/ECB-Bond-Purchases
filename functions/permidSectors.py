@@ -24,6 +24,7 @@ def get_companies_LEI(holdingsECB):
     companies_LEI = companies_LEI[['ISSUER', 'LEI']].drop_duplicates('ISSUER')
     return companies_LEI
 
+# Returns a datframe mapping Legal Entity IDs to PermIDs
 def get_LEI_mappings():
     LEIs = get_holdings_Eikon()['LEI'].dropna().astype('string').unique()
 
@@ -47,6 +48,7 @@ def get_LEI_mappings():
     lei_mappings.rename(columns = {'Match OpenPermID': 'PermID'}, inplace = True)
     return lei_mappings
 
+# returns dataframe holding permIDs and some sector and corporate info
 def get_sector_lookups():
     permids = get_LEI_mappings().PermID.astype('string')
     sector_lookups = pd.DataFrame({})
@@ -82,6 +84,7 @@ def get_sector_lookups():
 
     return sector_lookups
 
+# converts company info from codes to their meaning
 def convert_sector_lookups():
     sector_lookups = get_sector_lookups()
     sector_lookups_converted = sector_lookups.copy()
@@ -110,6 +113,8 @@ def convert_sector_lookups():
 
     return sector_lookups_converted
 
+# saves all data aqcuired in this file to excel files in output, if they do not already exist.
+# If these files do exist, they are read instead.
 def get_sector_mappings(holdingsECB):
     path = __file__
     parent = os.path.join(path, os.pardir)

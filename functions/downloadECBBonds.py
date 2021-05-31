@@ -5,10 +5,15 @@ import pandas as pd
 dictionaryBondsECB = {}
 dictionaryDatesBondsAdded = {}
 
-# This function gets the csv from the url and places the new data in a dictionary with keys = ISIN,
-# and value = [NCB, ISSUER, MATURITY DATE, COUPON RATE]
-# and second dictionary dictionaryDateAdded, keys=ISIN, values=[date,before2020]
 def downloadDataToDictionary(url,dictionaryCompanyInfo,dictionaryDateAdded,date):
+    """This function gets the csv from a url and places the new data in dictionaries 
+    
+    Param:
+    - url: url leading to csv
+    - dictionaryCompanyInfo: keys = ISIN, value = [NCB,ISSUER,MATURITY DATE,COUPON RATE]
+    - dictionaryDateAdded: keys = ISIN, value = [date] with date the date it first appeared 
+    in weekly overview"""
+
     r = requests.get(url) # create HTTP response object
     nameCompany = '' # make a string for the company name 
                      # (do this here so that is in scope of whole function)
@@ -36,6 +41,9 @@ def downloadDataToDictionary(url,dictionaryCompanyInfo,dictionaryDateAdded,date)
             dictionaryDateAdded[splitLine[1]] = [date]
 
 def downloadDataFromWebsites():
+    """iterate over the websites holding weekly overview of CSPP holdings and save it to two dictionaries
+   (one for holdings and one for dates aqcuired)"""
+
     dateToDownload = datetime.date(2017, 6, 23)
     change_url_date = datetime.date(2020, 3, 27)
     end_date = datetime.date(2021,4,23)
@@ -53,6 +61,11 @@ def downloadDataFromWebsites():
         dateToDownload += delta
 
 def dictionariesToDataframe():
+    """converts dictionaries on CSPP holdings to dataframes 
+    
+    return:
+    - [holdingsECB, holdingsECBDates]"""
+
     matrixData = [] # 2D array with row per ISIN and columns for different data
     for ISIN, dataInDictionary in dictionaryBondsECB.items():
         item = [ISIN] + dataInDictionary
@@ -66,16 +79,27 @@ def dictionariesToDataframe():
     return [holdingsECB, holdingsECBDates]
 
 def exportCSV(parent, holdingsECB, holdingsECBDates):
+    """saves the given dataframes to csv files in output folder
+    
+    Param:
+    - parent: path to folder where files should be saved
+    - holdingsECB: dataframe with info on holdings that should be saved as csv
+    - holdingsECBDates: dataframe with info on dates of holdings that should be saved as csv"""
+
     holdingsECB.to_csv(parent + "holdingsECB.csv", index=False,sep=";")
     holdingsECBDates.to_csv(parent + "holdingsECBDates.csv", index=False,sep="\t")
 
 def getPath():
+    """returns the path to an output folder where all output data is saved"""
+
     path = __file__
     parent = os.path.join(path, os.pardir)
     parent = os.path.join(parent, os.pardir)
     return parent + "\output\\"
 
 def download_ECB_Bonds():
+    """function returns info on holdings owned by ECB in CSPP program"""
+
     parent = getPath()
     if not (os.path.isfile(parent + "holdingsECB.csv") & os.path.isfile(parent + "holdingsECBDates.csv")):
         downloadDataFromWebsites()

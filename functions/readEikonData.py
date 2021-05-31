@@ -56,7 +56,7 @@ def get_dates_data_frame():
     years_issuer_bought = pd.DataFrame(matrixData,columns=["ISSUER","YEARS"])
     return years_issuer_bought
 
-
+# make a dictionary with keys = ISIN, values = years in which it was bought by ECB
 def get_dates_isin_data_frame():
     years_isin_bought = {}
     for index,row in get_dates().merge(eikon_data_general[["ISSUER","ISIN"]],"left","ISIN").iterrows():

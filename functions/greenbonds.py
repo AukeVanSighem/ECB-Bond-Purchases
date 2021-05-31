@@ -8,6 +8,7 @@ holdingsECB = downloadECBBonds.download_ECB_Bonds()
 data_folder = "https://s3groupsweden.s3.eu-central-1.amazonaws.com/Data/"
 
 def compareGreenbondsEuronextvsEIKON():
+    """compare the nb of bonds marked as green bonds in Euronext and EIKON database"""
     euronext_greenbonds = pd.read_excel(data_folder + "Euronext-Green-Bond-List.xlsx", header=0)
     ecb_euronext_greenbonds = holdingsECB[(holdingsECB["ISIN"].isin(euronext_greenbonds["ISIN"]))]
     
@@ -20,6 +21,7 @@ def compareGreenbondsEuronextvsEIKON():
     print("Euronext greenbonds: " + str(len(ecb_euronext_greenbonds.index)) + " vs EIKON greenbonds: " + str(len(ecb_EIKON_greenbonds.index)))
 
 def get_number_greenbonds_with_year():
+    """calculates the nb of green bonds the ECB invested in per year"""
     EIKON_greenbonds = readEikonData.eikon_data_environment[["ISIN", "Green Bond Flag"]]
     EIKON_greenbonds= EIKON_greenbonds.rename(columns={'Green Bond Flag' : 'Green_Bond_Flag'})
 
@@ -37,6 +39,7 @@ def get_number_greenbonds_with_year():
     return year_x_count
 
 def get_number_bonds_with_year():
+    """calculates total nb of bonds the ECB invested in per year"""
     bonds_with_year = holdingsECB.merge(readEikonData.get_dates_isin_data_frame(), how = "left", on = "ISIN")
     year_x_count = {"2017": 0, "2018": 0, "2019": 0, "2020": 0, "2021": 0}
     for bonds_index in bonds_with_year.index:
@@ -47,6 +50,7 @@ def get_number_bonds_with_year():
     return year_x_count
 
 def get_percentages_greenbonds_on_bonds_per_year():
+    """returns dataframe with percentage of green bonds bought by ECB"""
     number_bonds_with_year_dataframe = pd.DataFrame({'year' : list(get_number_bonds_with_year().keys()), 'count' : list(get_number_bonds_with_year().values())})
     number_greenbonds_with_year_dataframe = pd.DataFrame({'year' : list(get_number_greenbonds_with_year().keys()), 'count' : list(get_number_greenbonds_with_year().values())})
 
@@ -58,6 +62,7 @@ def get_percentages_greenbonds_on_bonds_per_year():
     return percentages_greenbonds_on_bonds_per_year
 
 def draw_spaghetti_plot_greenbonds():
+    """make a bar plot showing the percent of green bonds per year"""
     greenbonds_spaghetti_data_frame = get_percentages_greenbonds_on_bonds_per_year()
     
     greenbonds_spaghetti_data_frame.plot(kind='bar',x='year',y='percentage')
