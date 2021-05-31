@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from IPython.display import (display, clear_output)
 import ipywidgets as widgets
+from functions import pieCharts
 
 
 # Returns a dictionary with all the sectors from PermID (https://en.wikipedia.org/wiki/The_Refinitiv_Business_Classification) and gives every sector a score for greennes.
@@ -215,14 +216,12 @@ def display_widget():
     quick_pick.observe(on_value_change, names = "value")
     customize.observe(on_selection, names = "value")
 
-# Return sector_mappings with the specific business sectors exchanged with the category name to which they belong: "Less green", "More green" or "Neutral"
-def get_sector_mappings_modified():
+# Create sector_mappings with the specific business sectors exchanged with the category name to which they belong: "Less green", "More green" or "Neutral"
+# Drawing a sphagetti plot by grouping sectors according to greenness
+def draw_spaghetti_plot_with_grouped_sectors():
     green_dict = {-1: "Less green", 0: "Neutral", 1: "More green"}
     sector_mappings_modified = global_sector_mappings.copy()
     sector_mappings_modified["hasPrimaryBusinessSector"] = sector_mappings_modified.Greenness.apply(lambda x: green_dict[x])
-    return sector_mappings_modified
-
-# Drawing a sphagetti plot by grouping sectors according to greenness
-def draw_spaghetti_plot_with_grouped_sectors(levels_of_greenness):
+    levels_of_greenness = pieCharts.get_all_sectors("hasPrimaryBusinessSector", sector_mappings_modified)
     levels_of_greenness = map_green_dict_to_data_frame(levels_of_greenness)
-    draw_spaghetti_plot_sectors(levels_of_greenness, get_sector_mappings_modified(), global_years_issuer_bought, title = "greenness groups")
+    draw_spaghetti_plot_sectors(levels_of_greenness, sector_mappings_modified, global_years_issuer_bought, title = "greenness groups")
